@@ -4,26 +4,29 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
     }, { threshold: .2 });
     document.querySelectorAll('.stat-card, .signature-card').forEach(el=>io.observe(el));
+    setTimeout(()=>{
+      document.querySelectorAll('.stat-card:not(.in-view), .signature-card:not(.in-view)').forEach(el=>el.classList.add('in-view'));
+    }, 4000);
   } else {
     document.querySelectorAll('.stat-card, .signature-card').forEach(el=>el.classList.add('in-view'));
   }
 
-  // 平滑滑入展示：首屏元素按顺序错开，其它板块标题滚动到可视区域时触发
-  const heroRevealEls = Array.from(document.querySelectorAll('.hero .reveal-slide'));
+  // 板块标题滚动进场（首屏内容已经用纯CSS的 .hero-enter 动画，不依赖这段JS）
   if(reduceMotion || !('IntersectionObserver' in window)){
-    document.querySelectorAll('.reveal-slide').forEach(el=>el.classList.add('in-view'));
+    document.querySelectorAll('.reveal-scroll').forEach(el=>el.classList.add('in-view'));
   } else {
     const revealIO = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{
         if(!e.isIntersecting) return;
-        const el = e.target;
-        const heroIndex = heroRevealEls.indexOf(el);
-        const delay = heroIndex >= 0 ? heroIndex * 90 : 0;
-        setTimeout(()=> el.classList.add('in-view'), delay);
-        revealIO.unobserve(el);
+        e.target.classList.add('in-view');
+        revealIO.unobserve(e.target);
       });
     }, { threshold: .15 });
-    document.querySelectorAll('.reveal-slide').forEach(el=> revealIO.observe(el));
+    document.querySelectorAll('.reveal-scroll').forEach(el=> revealIO.observe(el));
+    // 兜底：万一 observer 在某些环境下没触发，几秒后强制全部显示，不让内容永久隐身
+    setTimeout(()=>{
+      document.querySelectorAll('.reveal-scroll:not(.in-view)').forEach(el=>el.classList.add('in-view'));
+    }, 4000);
   }
 
   function typewriter(el, speed){
