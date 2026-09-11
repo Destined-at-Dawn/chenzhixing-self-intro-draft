@@ -136,6 +136,10 @@
   .stat-num{ font-family: var(--font-display); font-weight:800; font-size: 30px; color: rgb(var(--color-accent)); }
   .stat-label{ font-size:13px; color: rgb(var(--color-muted-foreground)); margin-top:6px; }
   .stat-detail{ font-size: 13px; margin-top: 12px; color: rgb(var(--color-foreground) / .85); }
+  .proof-link{
+    display:inline-block; margin-top:10px; font-family: var(--font-ui); font-size:11px;
+    color: rgb(var(--color-accent-tertiary)); text-decoration:none; border-bottom:1px dashed rgb(var(--color-accent-tertiary) / .5);
+  }
 
   /* Signature project card — 招牌项目，样式比普通stat-card更醒目 */
   .signature-card{
