@@ -8,6 +8,24 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     document.querySelectorAll('.stat-card, .signature-card').forEach(el=>el.classList.add('in-view'));
   }
 
+  // 平滑滑入展示：首屏元素按顺序错开，其它板块标题滚动到可视区域时触发
+  const heroRevealEls = Array.from(document.querySelectorAll('.hero .reveal-slide'));
+  if(reduceMotion || !('IntersectionObserver' in window)){
+    document.querySelectorAll('.reveal-slide').forEach(el=>el.classList.add('in-view'));
+  } else {
+    const revealIO = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting) return;
+        const el = e.target;
+        const heroIndex = heroRevealEls.indexOf(el);
+        const delay = heroIndex >= 0 ? heroIndex * 90 : 0;
+        setTimeout(()=> el.classList.add('in-view'), delay);
+        revealIO.unobserve(el);
+      });
+    }, { threshold: .15 });
+    document.querySelectorAll('.reveal-slide').forEach(el=> revealIO.observe(el));
+  }
+
   function typewriter(el, speed){
     return new Promise((resolve)=>{
       const finalHTML = el.innerHTML;
@@ -34,6 +52,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 
   if(!reduceMotion){
     (async () => {
+      await new Promise(r => setTimeout(r, 900)); // 等首屏滑入动画先跑完，再开始打字机
       const tagline = document.getElementById('tagline');
       if(tagline) await typewriter(tagline, 55);
       const introLine = document.getElementById('intro-line');
