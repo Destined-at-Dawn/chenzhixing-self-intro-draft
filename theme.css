@@ -314,7 +314,7 @@
   .hobby-card li::before{ content:'>'; color: rgb(var(--color-accent)); text-shadow: 0 0 6px rgb(var(--color-accent) / .7); font-weight:700; margin-right:.5em; }
 
   /* 唱歌板块：连续自动滚动的照片长条，不加边框，悬浮/触摸时暂停——照抄参考站的 photo-marquee 写法 */
-  .photo-marquee{ position:relative; overflow:hidden; padding: 6px 0; }
+  .photo-marquee{ position:relative; overflow:hidden; padding: 6px 0; width:100%; min-width:0; contain: layout; }
   .photo-marquee::before, .photo-marquee::after{
     content:""; position:absolute; top:0; z-index:2; width:80px; height:100%; pointer-events:none;
   }
