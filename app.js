@@ -1,4 +1,23 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 打字机目标提前同步清空——避免"首屏淡入时先露出完整文字，再被清空重打"的穿帮。
+  // 不用visibility/display隐藏它们：万一后面的typewriter因为任何原因没跑起来，
+  // 原文字只是"被清空"而不是"被隐藏"，兜底会在下面把它们放回来，不会永久空白。
+  const typeTargets = [
+    ...['tagline', 'intro-line'].map(id => document.getElementById(id)).filter(Boolean),
+    ...document.querySelectorAll('.hud-log .type-line')
+  ];
+  const typeTargetOriginal = new Map(typeTargets.map(el => [el, el.innerHTML]));
+  if(!reduceMotion){
+    typeTargets.forEach(el => { el.textContent = ''; });
+    // 兜底：万一打字机逻辑没跑起来(报错/JS未执行到这里)，放回完整文字。
+    // 延时要大于整段打字序列最长可能耗时(tagline+intro-line+3行hud-log)，
+    // 否则会打断正常进行中的打字动画。
+    setTimeout(() => {
+      typeTargets.forEach(el => { if(!el.textContent) el.innerHTML = typeTargetOriginal.get(el); });
+    }, 9000);
+  }
+
   if(!reduceMotion && 'IntersectionObserver' in window){
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });

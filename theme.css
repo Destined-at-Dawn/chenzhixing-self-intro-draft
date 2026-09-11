@@ -230,16 +230,24 @@
     .stat-card, .signature-card{ transition:none; opacity:1; transform:none; }
     .flicker, .status-dot, .btn{ animation:none; }
     .type-caret{ display:none; }
-    .hero-enter{ opacity:1 !important; transform:none !important; animation:none !important; }
+    .hero-enter, .hero-enter-title{ opacity:1 !important; transform:none !important; animation:none !important; }
     .reveal-scroll{ opacity:1 !important; transform:none !important; }
   }
 
-  /* 首屏进场：纯CSS动画，不依赖JS/IntersectionObserver——JS万一卡住也保证首屏一定可见 */
-  @keyframes hero-enter-kf{ to{ opacity:1; transform: translateX(0) skewX(0); } }
+  /* 首屏进场：纯CSS动画，不依赖JS/IntersectionObserver——JS万一卡住也保证首屏一定可见
+     参照对标站的实际写法：大部分元素是简单的上浮淡入(translateY)，
+     只有主标题用了更戏剧化的skew歪斜效果，不是所有元素都做成倾斜 */
+  @keyframes hero-enter-kf{ to{ opacity:1; transform: translateY(0); } }
   .hero-enter{
-    opacity: 0; transform: translateX(-24px) skewX(-6deg);
-    animation: hero-enter-kf .7s cubic-bezier(.4,0,.2,1) forwards;
+    opacity: 0; transform: translateY(16px);
+    animation: hero-enter-kf .6s cubic-bezier(.4,0,.2,1) forwards;
   }
+  @keyframes hero-enter-title-kf{ to{ opacity:1; transform: translateX(0) skewX(0); } }
+  .hero-enter-title{
+    opacity: 0; transform: translateX(-16px) skewX(-7deg);
+    animation: hero-enter-title-kf .6s cubic-bezier(.4,0,.2,1) forwards;
+  }
+
 
   /* 滚动进场：各板块标题滚动到可视区域时触发（JS驱动，app.js里有兜底超时） */
   .reveal-scroll{
