@@ -112,7 +112,18 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
       });
     }, { threshold: .2 });
     document.querySelectorAll('.stat-card').forEach(el=> countIO.observe(el));
-    setTimeout(()=>{ document.querySelectorAll('.count-up').forEach(el=>{ if(el.textContent === '0') animateCount(el); }); }, 4000);
+    // 兜底：直接写最终值，不再走 requestAnimationFrame——
+    // 万一某些环境里 rAF 压根不触发(比如标签页不在前台/未真正渲染)，
+    // 走 animateCount 一样会卡住，所以这里必须是同步赋值，不依赖动画帧。
+    setTimeout(()=>{
+      document.querySelectorAll('.count-up').forEach(el=>{
+        const target = parseFloat(el.dataset.target);
+        const decimals = parseInt(el.dataset.decimals || '0', 10);
+        if(!Number.isNaN(target) && el.textContent !== target.toFixed(decimals)){
+          el.textContent = target.toFixed(decimals);
+        }
+      });
+    }, 4000);
   }
 
   // 灯箱：点开成绩单/详情图片时，在原背景上弹一个可滚动的大窗口，而不是新开白底页面
