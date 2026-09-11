@@ -84,42 +84,60 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
     })();
   }
 
-  // 照片轮播：自动播放 + 手动左右切换，支持任意数量的 .carousel-slide
-  document.querySelectorAll('.carousel').forEach((carousel)=>{
-    const track = carousel.querySelector('.carousel-track');
-    const slides = Array.from(carousel.querySelectorAll('.carousel-slide'));
-    const dotsWrap = carousel.parentElement.querySelector('.carousel-dots');
-    if(slides.length <= 1) return;
-    let index = 0;
-    let timer = null;
-
-    if(dotsWrap){
-      dotsWrap.innerHTML = '';
-      slides.forEach((_, i)=>{
-        const dot = document.createElement('span');
-        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-        dot.addEventListener('click', ()=> goTo(i));
-        dotsWrap.appendChild(dot);
+  // 数字跳动：卡片可见时从0跳到目标值(参考站 js-stat-value 的做法)
+  function animateCount(el){
+    const target = parseFloat(el.dataset.target);
+    if(Number.isNaN(target)){ return; }
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    if(reduceMotion){ el.textContent = target.toFixed(decimals); return; }
+    const duration = 1100;
+    const start = performance.now();
+    function frame(now){
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if(t < 1){ requestAnimationFrame(frame); }
+      else { el.textContent = target.toFixed(decimals); }
+    }
+    requestAnimationFrame(frame);
+  }
+  if(reduceMotion || !('IntersectionObserver' in window)){
+    document.querySelectorAll('.count-up').forEach(animateCount);
+  } else {
+    const countIO = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting) return;
+        e.target.querySelectorAll('.count-up').forEach(animateCount);
+        countIO.unobserve(e.target);
       });
-    }
+    }, { threshold: .2 });
+    document.querySelectorAll('.stat-card').forEach(el=> countIO.observe(el));
+    setTimeout(()=>{ document.querySelectorAll('.count-up').forEach(el=>{ if(el.textContent === '0') animateCount(el); }); }, 4000);
+  }
 
-    function render(){
-      track.style.transform = `translateX(-${index * 100}%)`;
-      if(dotsWrap){
-        Array.from(dotsWrap.children).forEach((d, i)=> d.classList.toggle('active', i === index));
-      }
+  // 灯箱：点开成绩单/详情图片时，在原背景上弹一个可滚动的大窗口，而不是新开白底页面
+  const lightbox = document.getElementById('lightbox');
+  if(lightbox){
+    const lightboxImg = document.getElementById('lightbox-img');
+    function openLightbox(src, alt){
+      lightboxImg.src = src;
+      lightboxImg.alt = alt || '';
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
     }
-    function goTo(i){ index = (i + slides.length) % slides.length; render(); }
-    function next(){ goTo(index + 1); }
-    function prev(){ goTo(index - 1); }
-
-    carousel.querySelector('.carousel-btn.next')?.addEventListener('click', ()=>{ next(); restart(); });
-    carousel.querySelector('.carousel-btn.prev')?.addEventListener('click', ()=>{ prev(); restart(); });
-
-    function restart(){
-      if(reduceMotion) return;
-      clearInterval(timer);
-      timer = setInterval(next, 4000);
+    function closeLightbox(){
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
     }
-    restart();
-  });
+    document.querySelectorAll('.proof-link').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        openLightbox(a.getAttribute('href'), a.textContent.trim());
+      });
+    });
+    lightbox.querySelector('.lightbox-backdrop')?.addEventListener('click', closeLightbox);
+    lightbox.querySelector('.lightbox-close')?.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeLightbox(); });
+  }
