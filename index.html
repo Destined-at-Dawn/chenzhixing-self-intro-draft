@@ -167,10 +167,34 @@
     nav{ display:none; }
   }
 
+  /* 一闪一闪的霓虹灯效果——不规则闪烁，不是简单的匀速呼吸 */
+  @keyframes neon-flicker{
+    0%, 19%, 21%, 23%, 54%, 56%, 100% { opacity: 1; }
+    20%, 22%, 55% { opacity: .3; }
+  }
+  @keyframes neon-pulse{
+    0%, 19%, 21%, 23%, 54%, 56%, 100% { filter: brightness(1); }
+    20%, 22%, 55% { filter: brightness(.55); }
+  }
+  .flicker{ animation: neon-flicker 4s infinite; }
+  .status-dot{ animation: neon-flicker 2.6s infinite; }
+  .btn{ animation: neon-pulse 5s infinite; }
+
+  /* 打字机效果 */
+  .type-caret{
+    display:inline-block; width:.55em; margin-left:2px;
+    background: rgb(var(--color-accent)); color: rgb(var(--color-accent));
+    -webkit-text-fill-color: rgb(var(--color-accent));
+    animation: caret-blink 1s steps(1) infinite;
+  }
+  @keyframes caret-blink{ 0%,49%{ opacity:1; } 50%,100%{ opacity:0; } }
+
   @media (prefers-reduced-motion: reduce){
     .cyber-glitch{ animation:none; }
     html{ scroll-behavior:auto; }
     .stat-card{ transition:none; opacity:1; transform:none; }
+    .flicker, .status-dot, .btn{ animation:none; }
+    .type-caret{ display:none; }
   }
 </style>
 </head>
@@ -188,15 +212,15 @@
     <a href="#life">兴趣爱好</a>
     <a href="#contact">联系</a>
   </nav>
-  <div class="status-chip"><span class="status-dot"></span>CANDIDATE·ONLINE</div>
+  <div class="status-chip"><span class="status-dot"></span><span class="flicker">CANDIDATE·ONLINE</span></div>
 </header>
 
 <section class="hero">
   <div>
-    <div class="hero-eyebrow">CLASS COUNCIL ELECTION / 班长竞选</div>
+    <div class="hero-eyebrow flicker">CLASS COUNCIL ELECTION / 班长竞选</div>
     <h1>
       <span class="cyber-glitch" data-text="陈知行">陈知行</span><br>
-      <span class="text-gradient">【一句话定位·待填】</span>
+      <span class="text-gradient flicker" id="tagline">【一句话定位·待填】</span>
     </h1>
     <p class="lead">上海交大准大一 · 金融计算机双学位 · 浙江温州人，现 base 上海。用做事的结果说话，不靠一张嘴竞选。</p>
     <div class="cta-row">
@@ -212,15 +236,15 @@
       <div class="hud-row"><span>SIGNAL</span><span>竞选班长</span></div>
     </div>
     <div class="hud-log">
-      <div>&gt; boot candidate_profile</div>
-      <div>&gt; load track: <b>英语</b> / <b>教育品牌搭建</b> / <b>AI项目</b> / <b>兴趣爱好</b></div>
-      <div>&gt; status <b>online</b></div>
+      <div class="type-line">&gt; boot candidate_profile</div>
+      <div class="type-line">&gt; load track: <b>英语</b> / <b>教育品牌搭建</b> / <b>AI项目</b> / <b>兴趣爱好</b></div>
+      <div class="type-line">&gt; status <b>online</b></div>
     </div>
   </div>
 </section>
 
 <section id="english">
-  <div class="section-eyebrow">TRACK 01</div>
+  <div class="section-eyebrow flicker">TRACK 01</div>
   <h2 class="section-title">英语</h2>
   <p class="track-note">不是嘴上说说的"英语好"——用分数和真实的教学经验说话。</p>
   <div class="grid3">
@@ -243,7 +267,7 @@
 </section>
 
 <section id="brand">
-  <div class="section-eyebrow">TRACK 02</div>
+  <div class="section-eyebrow flicker">TRACK 02</div>
   <h2 class="section-title">教育品牌搭建</h2>
   <p class="track-note">从一个人带家教，到搭建自己的英语陪跑训练营——正在把"教得好"变成"能规模化的产品"。</p>
   <div class="grid3">
@@ -266,7 +290,7 @@
 </section>
 
 <section id="ai">
-  <div class="section-eyebrow">TRACK 03</div>
+  <div class="section-eyebrow flicker">TRACK 03</div>
   <h2 class="section-title">AI项目</h2>
   <div class="placeholder">
     <b>内容待补充</b> —— 项目名称是什么？具体做了什么、用了什么工具/技术？做出了什么结果？
@@ -275,7 +299,7 @@
 </section>
 
 <section id="life">
-  <div class="section-eyebrow">TRACK 04</div>
+  <div class="section-eyebrow flicker">TRACK 04</div>
   <h2 class="section-title">兴趣爱好</h2>
   <div class="placeholder">
     <b>内容待补充</b> —— 平时的爱好/生活状态，用来让同学觉得你真实、有亲和力，不是只会"卷"的人。
@@ -283,7 +307,7 @@
 </section>
 
 <section id="contact">
-  <div class="section-eyebrow">CONNECT</div>
+  <div class="section-eyebrow flicker">CONNECT</div>
   <h2 class="section-title">联系我</h2>
   <div class="contact-grid">
     <div>
@@ -302,7 +326,7 @@
 </footer>
 
 <script>
-  // 尊重用户的"减少动态效果"系统设置：满足条件时不跑滚动揭示动画
+  // 尊重用户的"减少动态效果"系统设置：满足条件时不跑滚动揭示动画/打字机
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!reduceMotion && 'IntersectionObserver' in window){
     const io = new IntersectionObserver((entries)=>{
@@ -311,6 +335,42 @@
     document.querySelectorAll('.stat-card').forEach(el=>io.observe(el));
   } else {
     document.querySelectorAll('.stat-card').forEach(el=>el.classList.add('in-view'));
+  }
+
+  // 打字机效果：逐字敲出，打完恢复原本的富文本(保留<b>高亮)，非逐字打字时保留光标闪烁
+  function typewriter(el, speed){
+    return new Promise((resolve)=>{
+      const finalHTML = el.innerHTML;
+      const tmp = document.createElement('div');
+      tmp.innerHTML = finalHTML;
+      const text = tmp.textContent;
+      el.textContent = '';
+      const caret = document.createElement('span');
+      caret.className = 'type-caret';
+      el.appendChild(caret);
+      let i = 0;
+      (function tick(){
+        if(i < text.length){
+          caret.insertAdjacentText('beforebegin', text[i]);
+          i++;
+          setTimeout(tick, speed + Math.random() * 35);
+        } else {
+          el.innerHTML = finalHTML;
+          resolve();
+        }
+      })();
+    });
+  }
+
+  if(reduceMotion){
+    // 减少动态效果时不打字，直接显示最终文案
+  } else {
+    (async () => {
+      const tagline = document.getElementById('tagline');
+      if(tagline) await typewriter(tagline, 60);
+      const logLines = document.querySelectorAll('.hud-log .type-line');
+      for(const line of logLines){ await typewriter(line, 24); }
+    })();
   }
 </script>
 
