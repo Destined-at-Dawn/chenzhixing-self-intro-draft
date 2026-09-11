@@ -308,15 +308,11 @@
   .photo-box img{ width:100%; height:100%; object-fit:cover; transition: transform .4s cubic-bezier(.4,0,.2,1), filter .4s cubic-bezier(.4,0,.2,1); }
   .photo-box:hover img, .photo-box:active img{ transform: scale(1.05); filter: saturate(1.15) contrast(1.03); }
 
-  /* 还没有照片的板块：用线条图标撑场，不是空占位框 */
-  .icon-box{
-    width:100%; aspect-ratio: 4/3; margin-bottom:16px;
-    border:1px solid rgb(var(--color-border)); clip-path: var(--chamfer-sm);
-    background: rgb(var(--color-muted) / .4);
-    display:flex; align-items:center; justify-content:center;
-    color: rgb(var(--color-accent-tertiary));
+  /* 还没有照片的板块：不用图标撑场，走内容优先——标签+标题+描述，跟lilanyuan.cn的证据卡片一个思路 */
+  .hobby-tag{
+    font-family: var(--font-ui); font-size:11px; text-transform:uppercase; letter-spacing:.1em;
+    color: rgb(var(--color-accent-tertiary)); margin-bottom:10px;
   }
-  .icon-box svg{ width:38%; height:38%; filter: drop-shadow(0 0 10px rgb(var(--color-accent-tertiary) / .45)); }
   .hobby-card{
     clip-path: var(--chamfer-sm); border:1px solid rgb(var(--color-border)); background: rgb(var(--color-card));
     padding:22px; min-width:0;
