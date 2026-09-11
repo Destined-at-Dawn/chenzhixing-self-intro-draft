@@ -179,9 +179,12 @@
   /* Contact */
   .contact-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items:start; }
   .qr-box{
-    width: 160px; height:160px; border:1px dashed rgb(var(--color-border)); clip-path: var(--chamfer-sm);
+    width: 200px; border:1px solid rgb(var(--color-border)); clip-path: var(--chamfer-sm);
     display:flex; align-items:center; justify-content:center; font-size:12px; color: rgb(var(--color-muted-foreground)); text-align:center;
+    overflow:hidden;
   }
+  .qr-box img{ width:100%; display:block; }
+  .qr-box.placeholder-box{ height:160px; border-style:dashed; }
   footer{ padding: 40px 32px; text-align:center; font-family: var(--font-ui); font-size:12px; color: rgb(var(--color-muted-foreground)); border-top:1px solid rgb(var(--color-border)); }
 
   @media (max-width: 860px){
