@@ -303,7 +303,8 @@
   .photo-box:hover img, .photo-box:active img{ transform: scale(1.05); filter: saturate(1.15) contrast(1.03); }
   .hobby-card{
     clip-path: var(--chamfer-sm); border:1px solid rgb(var(--color-border)); background: rgb(var(--color-card));
-    padding:22px; transition: border-color .2s cubic-bezier(.4,0,.2,1), box-shadow .2s cubic-bezier(.4,0,.2,1), transform .2s cubic-bezier(.4,0,.2,1);
+    padding:22px; min-width:0;
+    transition: border-color .2s cubic-bezier(.4,0,.2,1), box-shadow .2s cubic-bezier(.4,0,.2,1), transform .2s cubic-bezier(.4,0,.2,1);
   }
   .hobby-card:hover, .hobby-card:active{ transform: translateY(-4px); border-color: rgb(var(--color-accent) / .7); box-shadow: var(--shadow-neon); }
   .hobby-card h3{ font-family: var(--font-display); font-weight:700; font-size:16px; margin: 0 0 14px; text-transform:uppercase; }
